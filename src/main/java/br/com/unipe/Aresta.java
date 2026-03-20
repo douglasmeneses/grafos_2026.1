@@ -9,18 +9,18 @@ import lombok.Setter;
 @Getter
 public class Aresta {
     private String nome;
-    private Vertice v1;
-    private Vertice v2;
+    private Vertice verticeOrigem;
+    private Vertice verticeDestino;
 
     //Construtor para arestas sem nome
     public Aresta(Vertice v1, Vertice v2) {
-        this.v1 = v1;
-        this.v2 = v2;
+        this.verticeOrigem = v1;
+        this.verticeDestino = v2;
     }
 
     @Override
     public String toString() {
         String nomeAresta = nome != null ? nome : "";
-        return nomeAresta + "{" + v1 + "," + v2 + "}";
+        return nomeAresta + "{" + verticeOrigem + "," + verticeDestino + "}";
     }
 }

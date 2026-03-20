@@ -1,13 +1,18 @@
 package br.com.unipe;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        Grafo grafo = new Grafo();
-        grafo.addVertice("A");
-        grafo.addVertice("B");
-        grafo.addAresta("A", "B");
+        Grafo grafo = new Grafo(); //não dirigido
+        grafo.adicionaVertices("1", "2", "3", "4", "5", "6");
+        grafo.addAresta("1", "3");
+        grafo.addAresta("1", "4");
+        grafo.addAresta("1", "5");
+        grafo.addAresta("2", "3");
+        grafo.addAresta("2", "4");
+        grafo.addAresta("2", "5");
+        grafo.addAresta("3", "5");
+        grafo.addAresta("4", "5");
+
         System.out.println(grafo);
     }
 }
