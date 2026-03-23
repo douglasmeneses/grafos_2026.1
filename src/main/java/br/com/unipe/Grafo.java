@@ -8,6 +8,8 @@ public class Grafo {
     private final List<Aresta> arestas;
     private final List<Vertice> vertices;
     private boolean eDirigido;
+    private int ordem;
+    private int tamanho;
 
     public Grafo() {
         this(false);
@@ -20,8 +22,9 @@ public class Grafo {
     }
 
     public void adicionaVertices(String... nomes) {
-        for (String nome : nomes) { //for-each
+        for (String nome : nomes) {
             vertices.add(new Vertice(nome));
+            ordem++;
         }
     }
 
@@ -34,28 +37,34 @@ public class Grafo {
     }
 
     private Aresta criaAresta(String nomeAresta, String nomeVertice1, String nomeVertice2) {
-        Vertice v1 = encontraVertice(nomeVertice1)
-                .orElseThrow(() -> new IllegalArgumentException("Vertice " + nomeVertice1 + " não encontrado."));
-        Vertice v2 = encontraVertice(nomeVertice2)
-                .orElseThrow(() -> new IllegalArgumentException("Vertice " + nomeVertice2 + " não encontrado."));
-        infereSeGrafoEDirecionado(v1, v2);
+        Vertice v1 = encontraVertice(nomeVertice1).orElseThrow(
+                () -> new IllegalArgumentException("Vertice " + nomeVertice1 + " não encontrado."));
+        Vertice v2 = encontraVertice(nomeVertice2).orElseThrow(
+                () -> new IllegalArgumentException("Vertice " + nomeVertice2 + " não encontrado."));
+        if (!eDirigido) infereSeGrafoEDirecionado(v1, v2);
+        aumentaGrauDosVertices(v1, v2);
+        tamanho++;
         return nomeAresta.isEmpty() ? new Aresta(v1, v2) : new Aresta(nomeAresta, v1, v2);
     }
 
+    private void aumentaGrauDosVertices(Vertice v1, Vertice v2) {
+        if (eDirigido) {
+            v1.aumentaOutDegree();
+            v2.aumentaInDegree();
+        } else {
+            v1.aumentaGrau();
+            v2.aumentaGrau();
+        }
+    }
+
     private void infereSeGrafoEDirecionado(Vertice v1, Vertice v2) {
-        if (!eDirigido) { //eDirigido == false
-            if (eSelfLoop(v1, v2)) {
-                eDirigido = true;
-            } else {
-                for (Aresta aresta : arestas) { //for-each
-                    if (eViaMaoDupla(v1, v2, aresta)) {
-                        eDirigido = true;
-                        break;
-                    }
-                    if (eArestaDuplicada(v1, v2, aresta)) {
-                        eDirigido = true;
-                        break;
-                    }
+        if (eSelfLoop(v1, v2)) {
+            reprocessamentoParaDigrafo();
+        } else {
+            for (Aresta aresta : arestas) {
+                if (eViaMaoDupla(v1, v2, aresta) || eArestaDuplicada(v2, v1, aresta)) {
+                    reprocessamentoParaDigrafo();
+                    break;
                 }
             }
         }
@@ -82,13 +91,25 @@ public class Grafo {
         return Optional.empty();
     }
 
+    private void reprocessamentoParaDigrafo() {
+        eDirigido = true;
+        System.out.println("Reprocessamento para digrafo necessário. O grafo agora é direcionado.");
+        vertices.forEach(vertice -> vertice.resetaGraus());
+        arestas.forEach(aresta -> {
+            aresta.getVerticeOrigem().aumentaOutDegree();
+            aresta.getVerticeDestino().aumentaInDegree();
+        });
+    }
+
     @Override
     public String toString() {
         return """
                 Grafo{
                    direcionado = %s,
-                   vertices = %s,
-                   arestas = %s
-                }""".formatted(eDirigido ? "sim" : "não", vertices, arestas);
+                   ordem = %d,
+                   tamanho = %d,
+                   vertices = \n%s,
+                   arestas = \n%s
+                }""".formatted(eDirigido ? "sim" : "não", ordem, tamanho, vertices, arestas);
     }
 }

@@ -8,10 +8,6 @@ public class Main {
         grafo.addAresta("1", "4");
         grafo.addAresta("1", "5");
         grafo.addAresta("2", "3");
-        grafo.addAresta("2", "4");
-        grafo.addAresta("2", "5");
-        grafo.addAresta("3", "5");
-        grafo.addAresta("4", "5");
 
         System.out.println(grafo);
     }
