@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -13,6 +15,8 @@ public class Vertice {
     private int grau;
     private int inDegree; // deve ser 0 para não-dirigido
     private int outDegree;// deve ser 0 para não-dirigido
+    private List<Vertice> adjacencias;
+    private List<Vertice> adjacentes;
 
     public void resetaGraus() {
         grau = inDegree = outDegree = 0;
@@ -30,6 +34,14 @@ public class Vertice {
     public void aumentaOutDegree() {
         grau++;
         outDegree++;
+    }
+
+    public void adicionaAdjacencia(Vertice vertice) {
+        adjacencias.add(vertice);
+    }
+
+    public void adicionaAdjacente(Vertice vertice) {
+        adjacentes.add(vertice);
     }
 
     @Override

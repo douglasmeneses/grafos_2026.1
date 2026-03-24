@@ -7,7 +7,7 @@ public class Main {
         grafo.addAresta("1", "3");
         grafo.addAresta("1", "4");
         grafo.addAresta("1", "5");
-        grafo.addAresta("2", "3");
+        grafo.addAresta("2", "2");
 
         System.out.println(grafo);
     }

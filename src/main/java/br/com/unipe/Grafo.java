@@ -43,10 +43,16 @@ public class Grafo {
                 () -> new IllegalArgumentException("Vertice " + nomeVertice2 + " não encontrado."));
         if (!eDirigido) infereSeGrafoEDirecionado(v1, v2);
         aumentaGrauDosVertices(v1, v2);
+        resolveAdjacencias(v1, v2);
         tamanho++;
         return nomeAresta.isEmpty() ? new Aresta(v1, v2) : new Aresta(nomeAresta, v1, v2);
     }
 
+    private void resolveAdjacencias(Vertice v1, Vertice v2) {
+        if (eDirigido) {
+            v1.adicionaAdjacencia;
+        }
+    }
     private void aumentaGrauDosVertices(Vertice v1, Vertice v2) {
         if (eDirigido) {
             v1.aumentaOutDegree();
