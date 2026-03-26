@@ -49,8 +49,11 @@ public class Grafo {
     }
 
     private void resolveAdjacencias(Vertice v1, Vertice v2) {
-        if (eDirigido) {
-            v1.adicionaAdjacencia;
+        v1.adicionaAdjacencia(v2);
+        v2.adicionaAdjacente(v1);
+        if (!eDirigido) {
+            v1.adicionaAdjacente(v2);
+            v2.adicionaAdjacencia(v1);
         }
     }
     private void aumentaGrauDosVertices(Vertice v1, Vertice v2) {
@@ -100,22 +103,64 @@ public class Grafo {
     private void reprocessamentoParaDigrafo() {
         eDirigido = true;
         System.out.println("Reprocessamento para digrafo necessário. O grafo agora é direcionado.");
-        vertices.forEach(vertice -> vertice.resetaGraus());
-        arestas.forEach(aresta -> {
-            aresta.getVerticeOrigem().aumentaOutDegree();
-            aresta.getVerticeDestino().aumentaInDegree();
+        vertices.forEach(vertice -> {
+            vertice.resetaGraus();
+            vertice.resetaAdjacenciasEAdjacentes();
         });
+        arestas.forEach(aresta -> {
+            Vertice origem = aresta.getVerticeOrigem();
+            Vertice destino = aresta.getVerticeDestino();
+            aumentaGrauDosVertices(origem, destino);
+            resolveAdjacencias(origem, destino);
+
+        });
+    }
+
+    public String exibeGraus(){
+        StringBuilder graus = new StringBuilder();
+        for (Vertice vertice : vertices) {
+            graus.append(vertice.exibeGraus());
+        }
+        return graus.toString();
+    }
+
+    public String exibeAdjacencias() {
+        StringBuilder adjacencias = new StringBuilder();
+        for (Vertice vertice : vertices) {
+            adjacencias
+                    .append("\n")
+                    .append(vertice.getNome())
+                    .append(": ")
+                    .append(vertice.getAdjacencias());
+        }
+        return adjacencias.toString();
+    }
+
+    public String exibeAdjacentes() {
+        StringBuilder adjacencias = new StringBuilder();
+        for (Vertice vertice : vertices) {
+            adjacencias
+                    .append("\n")
+                    .append(vertice.getNome())
+                    .append(": ")
+                    .append(vertice.getAdjacentes());
+        }
+        return adjacencias.toString();
     }
 
     @Override
     public String toString() {
         return """
-                Grafo{
-                   direcionado = %s,
-                   ordem = %d,
-                   tamanho = %d,
-                   vertices = \n%s,
-                   arestas = \n%s
-                }""".formatted(eDirigido ? "sim" : "não", ordem, tamanho, vertices, arestas);
+                direcionado = %s,
+                ordem = %d,
+                tamanho = %d,
+                vertices = %s,
+                arestas = %s,
+                graus = %s,
+                adjacencias = %s,
+                adjacentes = %s
+                }""".formatted(eDirigido ? "sim" : "não", ordem, tamanho, vertices, arestas, exibeGraus(),
+                exibeAdjacencias(), exibeAdjacentes());
     }
 }
+
