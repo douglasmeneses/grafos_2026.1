@@ -21,6 +21,6 @@ public class Aresta {
     @Override
     public String toString() {
         String nomeAresta = nome != null ? nome : "";
-        return nomeAresta + "{" + verticeOrigem + "," + verticeDestino + "}";
+        return "\n" + nomeAresta + "{" + verticeOrigem.getNome() + "," + verticeDestino.getNome() + "}";
     }
 }
