@@ -41,7 +41,9 @@ public class Grafo {
                 () -> new IllegalArgumentException("Vertice " + nomeVertice1 + " não encontrado."));
         Vertice v2 = encontraVertice(nomeVertice2).orElseThrow(
                 () -> new IllegalArgumentException("Vertice " + nomeVertice2 + " não encontrado."));
-        if (!eDirigido) infereSeGrafoEDirecionado(v1, v2);
+        if (!eDirigido) {
+            infereSeGrafoEDirecionado(v1, v2);
+        }
         aumentaGrauDosVertices(v1, v2);
         resolveAdjacencias(v1, v2);
         tamanho++;
@@ -49,13 +51,14 @@ public class Grafo {
     }
 
     private void resolveAdjacencias(Vertice v1, Vertice v2) {
-        v1.adicionaAdjacencia(v2);
-        v2.adicionaAdjacente(v1);
+        v1.adicionaAdjacencia(v2); //v1 envia p v2
+        v2.adicionaAdjacente(v1); // v2 recebe de v1
         if (!eDirigido) {
             v1.adicionaAdjacente(v2);
             v2.adicionaAdjacencia(v1);
         }
     }
+
     private void aumentaGrauDosVertices(Vertice v1, Vertice v2) {
         if (eDirigido) {
             v1.aumentaOutDegree();
@@ -103,20 +106,21 @@ public class Grafo {
     private void reprocessamentoParaDigrafo() {
         eDirigido = true;
         System.out.println("Reprocessamento para digrafo necessário. O grafo agora é direcionado.");
+        //limpeza
         vertices.forEach(vertice -> {
             vertice.resetaGraus();
             vertice.resetaAdjacenciasEAdjacentes();
         });
+        //recalcular tudo
         arestas.forEach(aresta -> {
             Vertice origem = aresta.getVerticeOrigem();
             Vertice destino = aresta.getVerticeDestino();
             aumentaGrauDosVertices(origem, destino);
             resolveAdjacencias(origem, destino);
-
         });
     }
 
-    public String exibeGraus(){
+    public String exibeGrausDosVertices() {
         StringBuilder graus = new StringBuilder();
         for (Vertice vertice : vertices) {
             graus.append(vertice.exibeGraus());
@@ -159,8 +163,15 @@ public class Grafo {
                 graus = %s,
                 adjacencias = %s,
                 adjacentes = %s
-                }""".formatted(eDirigido ? "sim" : "não", ordem, tamanho, vertices, arestas, exibeGraus(),
-                exibeAdjacencias(), exibeAdjacentes());
+                }""".formatted(
+                eDirigido ? "sim" : "não",
+                ordem,
+                tamanho,
+                vertices,
+                arestas,
+                exibeGrausDosVertices(),
+                exibeAdjacencias(),
+                exibeAdjacentes());
     }
 }
 

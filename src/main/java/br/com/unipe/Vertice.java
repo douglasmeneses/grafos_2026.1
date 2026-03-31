@@ -1,7 +1,6 @@
 package br.com.unipe;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -15,8 +14,8 @@ public class Vertice {
     private int grau;
     private int inDegree; // deve ser 0 para não-dirigido
     private int outDegree;// deve ser 0 para não-dirigido
-    private List<Vertice> adjacencias;
-    private List<Vertice> adjacentes;
+    private List<Vertice> adjacencias; //out
+    private List<Vertice> adjacentes; //in
 
     public Vertice (String nome) {
         this.nome = nome;
