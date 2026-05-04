@@ -1,8 +1,6 @@
 package br.com.unipe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Grafo {
     private final List<Aresta> arestas;
@@ -106,17 +104,23 @@ public class Grafo {
     private void reprocessamentoParaDigrafo() {
         eDirigido = true;
         System.out.println("Reprocessamento para digrafo necessário. O grafo agora é direcionado.");
-        //limpeza
-        vertices.forEach(vertice -> {
-            vertice.resetaGraus();
-            vertice.resetaAdjacenciasEAdjacentes();
-        });
-        //recalcular tudo
+        limpezaGrausEAdjacencias();
+        recalculaGrausEAdjacencias();
+    }
+
+    private void recalculaGrausEAdjacencias() {
         arestas.forEach(aresta -> {
             Vertice origem = aresta.getVerticeOrigem();
             Vertice destino = aresta.getVerticeDestino();
             aumentaGrauDosVertices(origem, destino);
             resolveAdjacencias(origem, destino);
+        });
+    }
+
+    private void limpezaGrausEAdjacencias() {
+        vertices.forEach(vertice -> {
+            vertice.resetaGraus();
+            vertice.resetaAdjacenciasEAdjacentes();
         });
     }
 
@@ -150,6 +154,51 @@ public class Grafo {
                     .append(vertice.getAdjacentes());
         }
         return adjacencias.toString();
+    }
+
+
+    public void exibeMatrizAdjacencia() {
+        List<Vertice> verticesOrdenados = vertices.stream().sorted(Comparator.comparing(Vertice::getNome)).toList();
+
+        StringBuilder matriz = new StringBuilder("\nMatriz de Adjacência\n\t");
+        verticesOrdenados.forEach(v -> matriz.append(v.getNome()).append("\t"));
+        matriz.append("\n");
+
+        for (Vertice vertice : verticesOrdenados) {
+            matriz.append(vertice.getNome()).append("\t");
+            List<Vertice> adjacencias = vertice.getAdjacencias();
+            for (Vertice outroVertice : verticesOrdenados) {
+                matriz.append(adjacencias.contains(outroVertice) ? "1" : "0").append("\t");
+            }
+            matriz.append("\n");
+        }
+
+        System.out.println(matriz);
+    }
+
+    public void exibeMatrizIncidencia() {
+        List<Vertice> verticesOrdenados = vertices.stream().sorted(Comparator.comparing(Vertice::getNome)).toList();
+        StringBuilder matriz = new StringBuilder("\nMatriz de Incidência\n\t");
+        arestas.forEach(a -> matriz.append(a.getNome()).append("\t"));
+        matriz.append("\n");
+        for (Vertice vertice : verticesOrdenados) {
+            matriz.append(vertice.getNome()).append("\t");
+            for (Aresta aresta : arestas) {
+                Vertice origem = aresta.getVerticeOrigem();
+                Vertice destino = aresta.getVerticeDestino();
+                if (origem.equals(vertice) && destino.equals(vertice)) {
+                    matriz.append(" 2").append("\t");
+                } else if (origem.equals(vertice)) {
+                    matriz.append(eDirigido ? "-1" : "1").append("\t");
+                } else if (destino.equals(vertice)) {
+                    matriz.append(" 1").append("\t");
+                } else {
+                    matriz.append(" 0\t");
+                }
+            }
+            matriz.append("\n");
+        }
+        System.out.println(matriz);
     }
 
     @Override
