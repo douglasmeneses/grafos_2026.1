@@ -17,6 +17,9 @@ public class Aresta {
         this.verticeOrigem = v1;
         this.verticeDestino = v2;
     }
+    public String getNome(){
+        return nome != null ? nome : "";
+    }
 
     @Override
     public String toString() {
