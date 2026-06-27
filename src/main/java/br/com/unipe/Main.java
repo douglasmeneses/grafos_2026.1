@@ -26,19 +26,6 @@ public class Main {
         grafo.addAresta("1", "3", 1);
         grafo.addAresta("4", "3", 4);
 
-        Grafo rede = new Grafo();
-        rede.adicionaVertices("Ana", "Bruno", "Eduardo");
-        rede.addAresta("Ana", "Bruno");
-        rede.addAresta("Bruno", "Eduardo");
-
-        LinkedInAnalyzer analyzer = new LinkedInAnalyzer(rede);
-
-        System.out.println(analyzer.grauSeparacao("Ana", "Eduardo")); // esperado: 2
-        System.out.println(analyzer.grauSeparacao("Ana", "Gabriel")); // esperado: -1
-
-        System.out.println(analyzer.grauSeparacao("Bruno", "Eduardo")); // esperado: 1
-        System.out.println(analyzer.grauSeparacao("Eduardo", "Ana"));   // esperado: 2
-        
         System.out.println(grafo.greedySearch("1", "5"));
 
     }
