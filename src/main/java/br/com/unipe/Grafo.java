@@ -1,7 +1,7 @@
 package br.com.unipe;
 
-import javax.swing.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class Grafo {
     private final List<Aresta> arestas;
@@ -211,7 +211,7 @@ public class Grafo {
                 () -> new IllegalArgumentException("Vertice " + origem + " não encontrado."));
         Vertice verticeDestino = destino == null ? null
                 : encontraVertice(destino).orElseThrow(
-                        () -> new IllegalArgumentException("Vertice " + destino + " não encontrado."));
+                () -> new IllegalArgumentException("Vertice " + destino + " não encontrado."));
 
         Stack<Vertice> pilha = new Stack<>();
         List<Vertice> visitados = new ArrayList<>();
@@ -401,6 +401,112 @@ public class Grafo {
         return aresta.getVerticeOrigem().equals(vertice) ? aresta.getVerticeDestino() : aresta.getVerticeOrigem();
     }
 
+
+    // -------------------------------------------------------------------------
+    // Dijkstra — menor caminho ponderado (maior afinidade)
+    // -------------------------------------------------------------------------
+
+    public ResultadoCaminho dijkstra(String nomeOrigem, String nomeDestino) {
+        // Valida se os vértices existem no grafo
+        Optional<Vertice> optOrigem = encontraVertice(nomeOrigem);
+        Optional<Vertice> optDestino = encontraVertice(nomeDestino);
+
+        if (optOrigem.isEmpty() || optDestino.isEmpty()) {
+            return new ResultadoCaminho(); // custo -1, caminho vazio
+        }
+
+        Vertice verticeOrigem = optOrigem.get();
+        Vertice verticeDestino = optDestino.get();
+
+        // Caso trivial: origem e destino são o mesmo vértice
+        if (verticeOrigem.equals(verticeDestino)) {
+            return new ResultadoCaminho(List.of(nomeOrigem), 0);
+        }
+
+        // Mapa de menor custo conhecido até cada vértice
+        Map<Vertice, Integer> distancias = new HashMap<>();
+
+        // Mapa de predecessores para reconstrução do caminho
+        Map<Vertice, Vertice> predecessores = new HashMap<>();
+
+        // Fila de prioridade ordenada pelo menor custo acumulado
+        // int[0] = custo acumulado, associado ao Vertice via entry
+        PriorityQueue<Map.Entry<Vertice, Integer>> fila = new PriorityQueue<>(
+                Comparator.comparingInt(Map.Entry::getValue)
+        );
+
+        // Inicializa todas as distâncias como "infinito"
+        for (Vertice v : vertices) {
+            distancias.put(v, Integer.MAX_VALUE);
+        }
+        distancias.put(verticeOrigem, 0);
+        fila.offer(Map.entry(verticeOrigem, 0));
+
+        Set<Vertice> visitados = new HashSet<>();
+
+        while (!fila.isEmpty()) {
+            Map.Entry<Vertice, Integer> entrada = fila.poll();
+            Vertice atual = entrada.getKey();
+            int custoAtual = entrada.getValue();
+
+            // Ignora se já foi processado com custo menor
+            if (visitados.contains(atual)) continue;
+            visitados.add(atual);
+
+            // Chegamos ao destino: podemos encerrar
+            if (atual.equals(verticeDestino)) break;
+
+            // Relaxamento: para cada vizinho de 'atual', verifica se passando por
+            // 'atual' chegamos mais barato
+            for (Aresta aresta : arestas) {
+                Vertice vizinho = null;
+                int peso = aresta.getPeso() != null ? aresta.getPeso() : 1;
+
+                // Grafo não-direcionado: a aresta vale nos dois sentidos
+                if (aresta.getVerticeOrigem().equals(atual)) {
+                    vizinho = aresta.getVerticeDestino();
+                } else if (!eDirigido && aresta.getVerticeDestino().equals(atual)) {
+                    vizinho = aresta.getVerticeOrigem();
+                }
+
+                if (vizinho == null || visitados.contains(vizinho)) continue;
+
+                int novoCusto = custoAtual + peso;
+                if (novoCusto < distancias.get(vizinho)) {
+                    distancias.put(vizinho, novoCusto);
+                    predecessores.put(vizinho, atual);
+                    fila.offer(Map.entry(vizinho, novoCusto));
+                }
+            }
+        }
+
+        // Se destino continua com distância "infinita", não existe caminho
+        if (distancias.get(verticeDestino) == Integer.MAX_VALUE) {
+            return new ResultadoCaminho();
+        }
+
+        // Reconstrói o caminho percorrendo os predecessores de trás para frente
+        List<String> caminho = new ArrayList<>();
+        Vertice passo = verticeDestino;
+        while (passo != null) {
+            caminho.add(0, passo.getNome()); // insere no início para manter a ordem
+            passo = predecessores.get(passo);
+        }
+
+        return new ResultadoCaminho(caminho, distancias.get(verticeDestino));
+    }
+
+    public boolean isEDirigido() {
+        return eDirigido;
+    }
+
+    public List<Vertice> getVertices() {
+        return vertices;
+    }
+
+    public List<Aresta> getArestas() {
+        return arestas;
+    }
 
     @Override
     public String toString() {
