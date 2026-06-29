@@ -1,6 +1,9 @@
 package br.com.unipe;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 public class LinkedInAnalyzer {
 
@@ -37,5 +40,44 @@ public class LinkedInAnalyzer {
         }
 
         return -1; //sem conexão
+    }
+
+    public ResultadoCaminho rotaMaiorAfinidade(String origem, String destino){
+        if (origem == null || destino == null) {
+            return new ResultadoCaminho();
+        }
+
+        if (origem.isBlank() || destino.isBlank()) {
+            return new ResultadoCaminho();
+        }
+
+        return rede.dijkstra(origem, destino);
+    }
+
+    public void exibirRotaMaiorAfinidade(String origem, String destino) {
+        ResultadoCaminho resultado = rotaMaiorAfinidade(origem, destino);
+
+        System.out.println("\n===== ROTA DE MAIOR AFINIDADE =====");
+
+        if (!resultado.existeCaminho()) {
+            System.out.println("Não existe caminho entre "+ origem + " e " + destino);
+
+            return;
+        }
+
+        System.out.println("Origem: " + origem);
+        System.out.println("Destino: " + destino);
+
+        imprimirCaminho(resultado);
+
+        System.out.println("Custo total: " + resultado.getCustoTotal());
+    }
+
+    private void imprimirCaminho(ResultadoCaminho resultado) {
+        System.out.println("\n Melhor caminho:");
+
+        System.out.println(
+            String.join(" -> ", resultado.getCaminho())
+        );
     }
 }

@@ -1,5 +1,7 @@
-import java.util.List;
+package br.com.unipe;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Encapsula o resultado de uma busca de caminho ponderado (Dijkstra).

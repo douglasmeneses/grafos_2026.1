@@ -41,5 +41,39 @@ public class Main {
         
         System.out.println(grafo.greedySearch("1", "5"));
 
+        System.out.println("\n==============================");
+        System.out.println("TESTE - ROTA DE MAIOR AFINIDADE");
+        System.out.println("==============================");
+
+        // Grafo de rede social (ponderado)
+        Grafo redeAfinidade = new Grafo(false, true);
+
+        redeAfinidade.adicionaVertices(
+            "Ana",
+            "Bruno",
+            "Carlos",
+            "Eduardo",
+            "Fernanda",
+            "Gabriel"
+        );
+
+        // Afinidades (quanto menor o peso, maior a afinidade)
+        redeAfinidade.addAresta("Ana", "Bruno", 1);
+        redeAfinidade.addAresta("Ana", "Carlos", 4);
+        redeAfinidade.addAresta("Bruno", "Eduardo", 2);
+        redeAfinidade.addAresta("Carlos", "Eduardo", 1);
+        redeAfinidade.addAresta("Eduardo", "Fernanda", 1);
+
+        // Gabriel fica isolado
+        LinkedInAnalyzer analyzerAfinidade = new LinkedInAnalyzer(redeAfinidade);
+
+        // Caminho encomtrado
+        analyzerAfinidade.exibirRotaMaiorAfinidade("Ana", "Fernanda");
+
+        // Sem caminho
+        analyzerAfinidade.exibirRotaMaiorAfinidade("Ana", "Gabriel");
+
+        // Mesmo usuário
+        analyzerAfinidade.exibirRotaMaiorAfinidade("Ana", "Ana");
     }
 }
